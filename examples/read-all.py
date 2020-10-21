@@ -2,6 +2,10 @@
 
 import bme680
 import time
+import serial
+
+port_name = '/dev/vircom2'
+sp = serial.Serial(port_name, 9600)
 
 print("""read-all.py - Displays temperature, pressure, humidity, and gas.
 
@@ -53,23 +57,31 @@ sensor.select_gas_heater_profile(0)
 # sensor.select_gas_heater_profile(1)
 
 print('\n\nPolling:')
+snd_data = 0
 try:
     while True:
+        snd_data = snd_data + 1
+        snd_data_string = str(snd_data)
+        print(snd_data_string)
+        sp.write(snd_data_string + "\n")
+
+
+        '''
         if sensor.get_sensor_data():
             output = '{0:.2f} C,{1:.2f} hPa,{2:.2f} %RH'.format(
                 sensor.data.temperature,
                 sensor.data.pressure,
                 sensor.data.humidity)
 
-            if sensor.data.heat_stable:
-                print('{0},{1} Ohms'.format(
-                    output,
-                    sensor.data.gas_resistance))
+            print(output)
+            snd_data = str(sensor.data.temperature)
+            snd_data2 = str(sensor.data.pressure)
+            snd_data3 = str(sensor.data.humidity)
+            sp.write(snd_data+","+snd_data2+","+snd_data3+"\n")
+        '''
 
-            else:
-                print(output)
+        time.sleep(0.001)
 
-        time.sleep(1)
 
 except KeyboardInterrupt:
     pass
